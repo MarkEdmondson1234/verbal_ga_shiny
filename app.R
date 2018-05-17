@@ -115,7 +115,7 @@ server <- function(input, output, session) {
   })
   
   output$text_analysis <- renderText({
-    req(transcript())
+    req(transcript()) 
     
     transcript()
   })
