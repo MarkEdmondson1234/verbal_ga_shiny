@@ -35,7 +35,7 @@ ui <- gentelellaPage(
             subtitle = "Trend",
             dygraphOutput("trend_plot"),
             datepicker = dateRangeInput("datepicker", NULL, start = Sys.Date() - 300)),
-  htmlOutput("talk"),
+  gl_talk_shinyUI("talk"),
   dashboard_box(width = 12, textOutput("text_analysis"), box_title = "Transcript")
 
 )
@@ -96,6 +96,7 @@ server <- function(input, output, session) {
     ga_data$human_dates <- format(ga_data$date, "%A %B")
     ga_data$human_day <- sapply(format(ga_data$date, "%d"), getOrdinalNumber)
     
+    trend <- round(coef(glm(sessions ~ date, data = ga_data))[[2]])
     paste("For the period covering", 
           format(input$datepicker[1],"%A %B"), "the",
           getOrdinalNumber(format(input$datepicker[1],"%d")),
@@ -108,9 +109,12 @@ server <- function(input, output, session) {
           ". The lowest number of daily sessions was", min(ga_data$sessions),
           ", on", 
           ga_data[which.min(ga_data$sessions),"human_dates"], "the",
-          ga_data[which.max(ga_data$sessions),"human_day"],
-          ". The overall mean avergae was", 
-          round(mean(ga_data$sessions),2))
+          ga_data[which.min(ga_data$sessions),"human_day"],
+          ". The overall mean average was", 
+          round(mean(ga_data$sessions),2),
+          ". Overall the trend is ",
+          if(trend>0) "upwards" else if(trend==0) "static" else "downwards",
+          "with a change of ", trend, "sessions per day")
     
   })
   
@@ -119,36 +123,8 @@ server <- function(input, output, session) {
     
     transcript()
   })
-   
-  # make a www folder to host the audio file
-  talk_file <- reactive({
-    req(transcript())
-    
-    # clean up any existing wav files
-    unlink(list.files("www", pattern = ".wav$", full.names = TRUE))
-    
-    # to prevent browser caching
-    paste0(input$language,input$translate,basename(tempfile(fileext = ".wav")))
-    
-  })
   
-  output$talk <- renderUI({
-    
-    req(transcript())
-    req(talk_file())
-    
-    # to prevent browser caching
-    output_name <- talk_file()
-    
-    gl_talk(transcript(),
-            name = "en-US-Wavenet-C",
-            output = file.path("www", output_name))
-    
-    
-    ## the audio file sits in folder www, but the audio file must be referenced without www
-    tags$audio(autoplay = NA, controls = NA, tags$source(src = output_name))
-    
-  })
+  callModule(gl_talk_shiny, "talk", transcript = transcript, controls = FALSE)
 
 }
 
