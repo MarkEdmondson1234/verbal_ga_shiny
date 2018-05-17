@@ -24,7 +24,7 @@ getOrdinalNumber <- function(num) {
 }
 
 ui <- gentelellaPage(
-  menuItems = list(sideBarElement(gar_auth_jsUI("auth"))),
+  menuItems = list(sideBarElement(gar_auth_jsUI("auth", approval_prompt_force = FALSE))),
   title_tag = "Google Analytics Talk",
   site_title = a(class="site_title", icon("phone"), span("GA Talk")),
   footer = "Made in Denmark",
@@ -124,7 +124,7 @@ server <- function(input, output, session) {
     transcript()
   })
   
-  callModule(gl_talk_shiny, "talk", transcript = transcript, controls = FALSE)
+  callModule(gl_talk_shiny, "talk", transcript = transcript, controls = TRUE)
 
 }
 
