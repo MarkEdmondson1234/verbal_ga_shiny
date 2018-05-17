@@ -24,7 +24,8 @@ getOrdinalNumber <- function(num) {
 }
 
 ui <- gentelellaPage(
-  menuItems = list(sideBarElement(gar_auth_jsUI("auth", approval_prompt_force = FALSE))),
+  menuItems = list(sideBarElement(gar_auth_jsUI("auth", 
+                                                approval_prompt_force = FALSE))),
   title_tag = "Google Analytics Talk",
   site_title = a(class="site_title", icon("phone"), span("GA Talk")),
   footer = "Made in Denmark",
@@ -96,7 +97,7 @@ server <- function(input, output, session) {
     ga_data$human_dates <- format(ga_data$date, "%A %B")
     ga_data$human_day <- sapply(format(ga_data$date, "%d"), getOrdinalNumber)
     
-    trend <- round(coef(glm(sessions ~ date, data = ga_data))[[2]])
+    trend <- round(coef(glm(sessions ~ date, data = ga_data))[[2]],2)*30
     paste("For the period covering", 
           format(input$datepicker[1],"%A %B"), "the",
           getOrdinalNumber(format(input$datepicker[1],"%d")),
@@ -114,7 +115,7 @@ server <- function(input, output, session) {
           round(mean(ga_data$sessions),2),
           ". Overall the trend is ",
           if(trend>0) "upwards" else if(trend==0) "static" else "downwards",
-          "with a change of ", trend, "sessions per day")
+          "with a change of ", trend, "sessions per month")
     
   })
   
