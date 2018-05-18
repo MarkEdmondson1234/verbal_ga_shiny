@@ -41,13 +41,11 @@ You set this at this link: `https://console.cloud.google.com/apis/credentials`
 
 This screen also has `Download JSON` at the top which is the client secret used within `GAR_CLIENT_WEB_JSON` below for `gar_set_client()`
 
-For this app in particular I has these environment arguments set in my `.Renviron`:
+For this app in particular I have these environment arguments set in my `.Renviron`:
 
 * `GAR_CLIENT_WEB_JSON` pointing at my download client details (web app) for my project that has Google Analytics and Google Text-to-speech APIs activated for `gar_set_client()`
 * Turned off auto auth for `googleAnalyticsR` by commenting out `GA_AUTH_FILE` for `google_analytics()`
 * Had my authentication service JSON for cloud platform set in `GL_AUTH` for `gl_talk()`
-
-
 
 
 The JS auth (`gar_auth_jsUI()`) will only work if you are on `http://localhost:1221` and not on `http://127.0.0.1:1221` (the default when launching in RStudio), so change the address in the browser (the are both the same, but Google won't allow ip addresses as a JavaScript origin.)
