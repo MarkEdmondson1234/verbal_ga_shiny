@@ -50,7 +50,7 @@ For this app in particular I has these environment arguments set in my `.Renviro
 
 
 
-The JS auth (`gar_auth_jsUI()`) will only work if you are on `http://localhost:1221` and not on `http://127.0.0.1:1221` (the default when launching in RStudio), so change the address in the browser (the are both the same, but google doensøt allow I.P addresses as a JavaScript origin.
+The JS auth (`gar_auth_jsUI()`) will only work if you are on `http://localhost:1221` and not on `http://127.0.0.1:1221` (the default when launching in RStudio), so change the address in the browser (the are both the same, but Google doens't allow ip addresses as a JavaScript origin.)
 
 ## Screenshot
 
