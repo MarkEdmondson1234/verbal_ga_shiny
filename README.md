@@ -33,9 +33,9 @@ remotes::install_github("MarkEdmondson1234/gentelellaShiny")
 
 You then need authentication setup as per the libraries installation instructions.
 
-For this app in particular I has these set in my `.Renviron`:
+For this app in particular I has these environment arguments set in my `.Renviron`:
 
-* Has environment argument `GAR_CLIENT_WEB_JSON` pointing at my download client details (web app) for my project that has Google Analytics and Google Text-to-speech APIs activated for `gar_set_client()`
+* `GAR_CLIENT_WEB_JSON` pointing at my download client details (web app) for my project that has Google Analytics and Google Text-to-speech APIs activated for `gar_set_client()`
 * Turned off auto auth for `googleAnalyticsR` by commenting out `GA_AUTH_FILE` for `google_analytics()`
 * Had my authentication service JSON for cloud platform set in `GL_AUTH` for `gl_talk()`
 
