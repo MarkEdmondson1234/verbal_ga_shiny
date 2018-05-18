@@ -33,3 +33,7 @@ vignettes/*.pdf
 *.knit.md
 .Rproj.user
 *.wav
+
+auth/
+rsconnect/
+.Renviron

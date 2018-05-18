@@ -1,6 +1,12 @@
 library(shiny)             # R webapps
 library(gentelellaShiny)   # ui theme
 library(googleAuthR)       # auth login
+
+# takes JSON client secrets from GAR_CLIENT_WEB_JSON
+# set before calls to googleAnalyticsR to make sure it doesn't use default project.
+gar_set_client(scopes = c("https://www.googleapis.com/auth/cloud-platform",
+                          "https://www.googleapis.com/auth/analytics.readonly"))
+
 library(googleAnalyticsR)  # get google analytics
 library(googleLanguageR)   # talking
 library(dygraphs)          # plots 
@@ -43,10 +49,6 @@ ui <- gentelellaPage(
 
 
 server <- function(input, output, session) {
-  
-  # takes JSON client secrets from GAR_CLIENT_WEB_JSON
-  gar_set_client(scopes = c("https://www.googleapis.com/auth/cloud-platform",
-                            "https://www.googleapis.com/auth/analytics.readonly"))
   
   # get auth token
   auth <- callModule(gar_auth_js, "auth")
