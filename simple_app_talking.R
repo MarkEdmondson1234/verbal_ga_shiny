@@ -1,14 +1,14 @@
 library(shiny)             # R webapps
 library(googleAuthR)       # auth login
-library(gentelellaShiny)   # ui theme
 
-gar_set_client(scopes = c("https://www.googleapis.com/auth/analytics.readonly",
-                          "https://www.googleapis.com/auth/cloud-platform"))
+# takes JSON client secrets from GAR_CLIENT_WEB_JSON
+# set before calls to googleAnalyticsR to make sure it doesn't use default project.
+gar_set_client(scopes = c("https://www.googleapis.com/auth/cloud-platform",
+                          "https://www.googleapis.com/auth/analytics.readonly"))
 
 library(googleAnalyticsR)  # get google analytics
 library(googleLanguageR)   # talking
-library(dygraphs)          # plots 
-library(xts)               # time-series
+
 
 # to make nice ordinals
 # https://stackoverflow.com/questions/40039903/r-add-th-rd-and-nd-to-dates/40040338
@@ -27,23 +27,19 @@ getOrdinalNumber <- function(num) {
   result
 }
 
-ui <- gentelellaPage(
-  menuItems = list(sideBarElement(gar_auth_jsUI("auth", 
-                                                approval_prompt_force = FALSE))),
-  title_tag = "Google Analytics Talk",
-  site_title = a(class="site_title", icon("phone"), span("GA Talk")),
-  footer = "Made in Denmark 2018",
+
+ui <- fluidPage(
+  gar_auth_jsUI("auth", approval_prompt_force = FALSE),
+  
   # shiny UI elements
-  column(width = 12, authDropdownUI("auth_dropdown", 
-                                    inColumns = TRUE)),
-  graph_box(boxtitle = "Google Analytics Data",
-            subtitle = "Trend",
-            dygraphOutput("trend_plot"),
-            datepicker = dateRangeInput("datepicker", NULL, start = Sys.Date() - 300)),
+  column(width = 12, authDropdownUI("auth_dropdown", inColumns = TRUE)),
+  dateRangeInput("datepicker", NULL, start = Sys.Date() - 300),
+  plotOutput("trend_plot"),
   gl_talk_shinyUI("talk"),
-  dashboard_box(width = 12, textOutput("text_analysis"), box_title = "Transcript")
+  textOutput("text_analysis")
   
 )
+
 
 server <- function(input, output, session) {
   
@@ -61,8 +57,7 @@ server <- function(input, output, session) {
     
   })
   
-  view_id <- callModule(authDropdown, "auth_dropdown", 
-                        ga.table = ga_accounts)
+  view_id <- callModule(authDropdown, "auth_dropdown", ga.table = ga_accounts)
   
   ga_data <- reactive({
     req(view_id())
@@ -79,13 +74,11 @@ server <- function(input, output, session) {
     )
   })
   
-  output$trend_plot <- renderDygraph({
+  output$trend_plot <- renderPlot({
     req(ga_data())
     ga_data <- ga_data()
     
-    gadata_ts <- xts(ga_data$sessions, order.by = ga_data$date)
-    
-    gadata_ts %>% dygraph
+    plot(ga_data$sessions, type = "l")
     
   })
   
@@ -98,7 +91,6 @@ server <- function(input, output, session) {
     ga_data$human_day <- sapply(format(ga_data$date, "%d"), getOrdinalNumber)
     
     trend <- round(coef(glm(sessions ~ date, data = ga_data))[[2]],2)*30
-    
     paste("For the period covering", 
           format(input$datepicker[1],"%A %B"), "the",
           getOrdinalNumber(format(input$datepicker[1],"%d")),
@@ -128,9 +120,10 @@ server <- function(input, output, session) {
   
   callModule(gl_talk_shiny, "talk", transcript = transcript, 
              controls = TRUE, 
-             gender = "MALE")
+             gender = "FEMALE")
   
 }
 
 # Run the application 
 shinyApp(ui = ui, server = server)
+

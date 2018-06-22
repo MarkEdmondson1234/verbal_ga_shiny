@@ -2,6 +2,10 @@
 
 A simple Shiny app to display some Google Analytics data, and talk over some statistics of that data, using `googleAnalyticsR` and `googleLanguageR::gl_talk()`
 
+A videocast describing how to create this app is available on [YouTube here](https://www.youtube.com/watch?v=4Ht_vEXJ4wo)
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/4Ht_vEXJ4wo" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
 ## Install
 
 It needs these libraries:
